@@ -30,6 +30,7 @@
 #define WOW_MOP_16357   16357
 #define WOW_MOP_16650   16650
 #define WOW_MOP_16709   16709
+#define WOW_MOP_16826   16826
 
 // stores and manages hook entries
 // this will be compiled into a static lib
@@ -87,6 +88,7 @@ public:
         FillHookEntry16357();
         FillHookEntry16650();
         FillHookEntry16709();
+        FillHookEntry16826();
     }
 
     // returns true if hook entry exists for this specified build number
@@ -144,16 +146,25 @@ private:
         _hookEntryMap[WOW_MOP_16357] = hookEntry16357;
     }
 
+    // address offsets for MOP, 16650
     static void FillHookEntry16650()
     {
         HookEntry hookEntry166550 = HookEntry(0x448D10, 0x446720);
         _hookEntryMap[WOW_MOP_16650] = hookEntry166550;
     }
 
+    // address offsets for MOP, 16709
     static void FillHookEntry16709()
     {
         HookEntry hookEntry16709 = HookEntry(0x448FB0, 0x446A00);
         _hookEntryMap[WOW_MOP_16709] = hookEntry16709;
+    }
+
+    // address offsets for MOP, 16826
+    static void FillHookEntry16826()
+    {
+        HookEntry hookEntry16826 = HookEntry(0x448E40, 0x446880);
+        _hookEntryMap[WOW_MOP_16826] = hookEntry16826;
     }
 
     // type for storing hook entries
