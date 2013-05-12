@@ -42,6 +42,7 @@ packets from the client.
             admin user is also OK but not needed.
     - That's all. You can start SzimatSzatyor at anytime.
     - If you want to close the sniffer just press CTRL-C or close the WoW.
+      Note: CTRL-C works only in fullscreen mode.
     - Log files are created to where SzimatSzatyor is.
 
 

@@ -196,19 +196,20 @@ DWORD MainThreadControl(LPVOID /* param */)
     char fileNameBinary[64];
 
     // fills the basic file name format
-    sprintf(fileName,
-            "wowsniff_%hu_%u_%dy%02dm%02dd%02dh%02di%02ds",
-            buildNumber,
-            now,
-            date->tm_year + 1900,
-            date->tm_mon + 1,
-            date->tm_mday,
-            date->tm_hour,
-            date->tm_min,
-            date->tm_sec);
+    _snprintf(fileName,
+              64,
+              "wowsniff_%hu_%u_%dy%02dm%02dd%02dh%02di%02ds",
+              buildNumber,
+              now,
+              date->tm_year + 1900,
+              date->tm_mon + 1,
+              date->tm_mday,
+              date->tm_hour,
+              date->tm_min,
+              date->tm_sec);
     // fills the specific file names
-    sprintf(fileNameUserFriendly, "%s.log", fileName);
-    sprintf(fileNameBinary, "%s.bin", fileName);
+    _snprintf(fileNameUserFriendly, 64, "%s.log", fileName);
+    _snprintf(fileNameBinary, 64, "%s.bin", fileName);
 
     // some info
     printf("User friendly dump: %s\n", fileNameUserFriendly);
@@ -218,8 +219,8 @@ DWORD MainThreadControl(LPVOID /* param */)
     PathRemoveFileSpec(dllPath);
 
     // simply appends the file names to the DLL's location
-    sprintf(logPath, "%s\\%s", dllPath, fileNameUserFriendly);
-    sprintf(binPath, "%s\\%s", dllPath, fileNameBinary);
+    _snprintf(logPath, MAX_PATH, "%s\\%s", dllPath, fileNameUserFriendly);
+    _snprintf(binPath, MAX_PATH, "%s\\%s", dllPath, fileNameBinary);
 
 
 
@@ -273,7 +274,7 @@ DWORD __fastcall SendHook(void* thisPTR,
                           void* param2)
 {
     DWORD buffer = *(DWORD*)((DWORD)param1 + 4);
-    WORD packetOcode = *(DWORD*)buffer;
+    DWORD packetOcode = *(DWORD*)buffer;
     DWORD packetSize = *(DWORD*)((DWORD)param1 + 16); // totalLength, writePos
 
     // dumps the packet
@@ -310,7 +311,7 @@ DWORD __fastcall RecvHook(void* thisPTR,
                           void* param3)
 {
     DWORD buffer = *(DWORD*)((DWORD)param2 + 4);
-    WORD packetOcode = *(DWORD*)buffer;
+    DWORD packetOcode = *(DWORD*)buffer;
     DWORD packetSize = *(DWORD*)((DWORD)param2 + 16); // totalLength, writePos
 
     // packet dump
