@@ -1,11 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "szimat", "szimat.vcxproj", "{5DFF24EC-AA0F-45F1-A3B9-8F6C77E6519F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "szatyor", "szatyor.vcxproj", "{83F64226-3010-4847-BC63-60AF7F25F1D0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "szatyor", "szatyor.vcxproj", "{7EE1F6A5-5533-4AE2-9262-10FAD628BE34}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "szimat", "szimat.vcxproj", "{3408C7FC-5BBB-4957-9958-F4499A75F33F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shared", "shared.vcxproj", "{05C8105C-D117-4EF3-B9DE-D54EB77A226F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shared", "shared.vcxproj", "{817C3494-293C-4A8C-9178-C70E7427977A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EB03B172-10A8-4883-B62E-C238C46052A6}"
+	ProjectSection(SolutionItems) = preProject
+		COPYING = COPYING
+		README = README
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,18 +19,18 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5DFF24EC-AA0F-45F1-A3B9-8F6C77E6519F}.Debug|Win32.ActiveCfg = Debug|Win32
-		{5DFF24EC-AA0F-45F1-A3B9-8F6C77E6519F}.Debug|Win32.Build.0 = Debug|Win32
-		{5DFF24EC-AA0F-45F1-A3B9-8F6C77E6519F}.Release|Win32.ActiveCfg = Release|Win32
-		{5DFF24EC-AA0F-45F1-A3B9-8F6C77E6519F}.Release|Win32.Build.0 = Release|Win32
-		{7EE1F6A5-5533-4AE2-9262-10FAD628BE34}.Debug|Win32.ActiveCfg = Debug|Win32
-		{7EE1F6A5-5533-4AE2-9262-10FAD628BE34}.Debug|Win32.Build.0 = Debug|Win32
-		{7EE1F6A5-5533-4AE2-9262-10FAD628BE34}.Release|Win32.ActiveCfg = Release|Win32
-		{7EE1F6A5-5533-4AE2-9262-10FAD628BE34}.Release|Win32.Build.0 = Release|Win32
-		{05C8105C-D117-4EF3-B9DE-D54EB77A226F}.Debug|Win32.ActiveCfg = Debug|Win32
-		{05C8105C-D117-4EF3-B9DE-D54EB77A226F}.Debug|Win32.Build.0 = Debug|Win32
-		{05C8105C-D117-4EF3-B9DE-D54EB77A226F}.Release|Win32.ActiveCfg = Release|Win32
-		{05C8105C-D117-4EF3-B9DE-D54EB77A226F}.Release|Win32.Build.0 = Release|Win32
+		{83F64226-3010-4847-BC63-60AF7F25F1D0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{83F64226-3010-4847-BC63-60AF7F25F1D0}.Debug|Win32.Build.0 = Debug|Win32
+		{83F64226-3010-4847-BC63-60AF7F25F1D0}.Release|Win32.ActiveCfg = Release|Win32
+		{83F64226-3010-4847-BC63-60AF7F25F1D0}.Release|Win32.Build.0 = Release|Win32
+		{3408C7FC-5BBB-4957-9958-F4499A75F33F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3408C7FC-5BBB-4957-9958-F4499A75F33F}.Debug|Win32.Build.0 = Debug|Win32
+		{3408C7FC-5BBB-4957-9958-F4499A75F33F}.Release|Win32.ActiveCfg = Release|Win32
+		{3408C7FC-5BBB-4957-9958-F4499A75F33F}.Release|Win32.Build.0 = Release|Win32
+		{817C3494-293C-4A8C-9178-C70E7427977A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{817C3494-293C-4A8C-9178-C70E7427977A}.Debug|Win32.Build.0 = Debug|Win32
+		{817C3494-293C-4A8C-9178-C70E7427977A}.Release|Win32.ActiveCfg = Release|Win32
+		{817C3494-293C-4A8C-9178-C70E7427977A}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
