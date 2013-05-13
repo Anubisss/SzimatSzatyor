@@ -94,6 +94,10 @@ char logPath[MAX_PATH] = { 0 };
 // location of the binary packet dump file
 char binPath[MAX_PATH] = { 0 };
 
+/* static */ char PacketDump::enableUserFriendlyPath[MAX_PATH] = { 0 };
+/* static */
+          char PacketDump::enableUserFriendlyFileName[] = "dump_user_friendly";
+
 // basically this method controls what the sniffer should do
 // pretty much like a "main method"
 DWORD MainThreadControl(LPVOID /* param */);
@@ -144,6 +148,10 @@ DWORD MainThreadControl(LPVOID /* param */)
     printf("Note: you can simply re-attach the sniffer without ");
     printf("restarting the WoW.\n\n");
 
+    printf("User friendly format dump is disabled by default.\n");
+    printf("To enable just create a file which name is ");
+    printf("\"dump_user_friendly\".\nDelete if you wan't to disable it.\n\n");
+
     // inits the HookManager
     HookEntryManager::FillHookEntries();
 
@@ -173,6 +181,7 @@ DWORD MainThreadControl(LPVOID /* param */)
     DWORD now = (DWORD)time(&rawTime);
     tm* date = localtime(&rawTime);
 
+    // path of the DLL
     char dllPath[MAX_PATH];
     // gets where is the DLL which injected into the client
     DWORD dllPathSize = GetModuleFileName((HMODULE)instanceDLL,
@@ -221,6 +230,14 @@ DWORD MainThreadControl(LPVOID /* param */)
     // simply appends the file names to the DLL's location
     _snprintf(logPath, MAX_PATH, "%s\\%s", dllPath, fileNameUserFriendly);
     _snprintf(binPath, MAX_PATH, "%s\\%s", dllPath, fileNameBinary);
+
+    // "calculates" the path of the file which enables
+    // the "user friendly" log format
+    _snprintf(PacketDump::enableUserFriendlyPath,
+              MAX_PATH,
+              "%s\\%s",
+              dllPath,
+              PacketDump::enableUserFriendlyFileName);
 
 
 

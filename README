@@ -31,7 +31,8 @@ packets from the client.
       TrinityCore's WowPacketParser which is available at here:
       https://github.com/TrinityCore/WowPacketParser
     - Dumps packets to a "user friendly" log file which makes possible to
-      read the packets without parsing them.
+      read the packets without parsing them. This feature is disabled by
+      default. Read the "USAGE" section to know how to enable it.
 
 *USAGE:
     - You need szatyor.exe (the injector) and szimat.dll (the sniffer)
@@ -44,6 +45,10 @@ packets from the client.
     - If you want to close the sniffer just press CTRL-C or close the WoW.
       Note: CTRL-C works only in fullscreen mode.
     - Log files are created to where SzimatSzatyor is.
+    - Create an empty file (name: dump_user_friendly) where the SzimatSzatyor
+      is to enable the "user friendly" log format. Just delete (or rename)
+      this file if you want to disable it again. You can enable and disable
+      (even multiple times) while WoW is running.
 
 
 Currently supported clients:

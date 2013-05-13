@@ -29,6 +29,11 @@ public:
         PACKET_TYPE_S2C = 1  // server to client, SMSG
     };
 
+    // name of the file which enables the "user friendly" log format
+    static char enableUserFriendlyFileName[];
+    // path of the file which enables the "user friendly" log format
+    static char enableUserFriendlyPath[MAX_PATH];
+
     // just this method should be used "globally"
     // basically logs the packets via other private functions
     static void DumpPacket(const char* userFriendlyDumpFileName,
@@ -42,13 +47,18 @@ public:
         time_t rawTime;
         time(&rawTime);
 
-        // dumps the "user friendly" format of the packet
-        DumpPacketUserFriendly(userFriendlyDumpFileName,
-                               packetType,
-                               packetOpcode,
-                               packetSize,
-                               buffer,
-                               rawTime);
+        // only dumps "user friendly" format if
+        // "dump_user_friendly" file exists
+        if (PathFileExists(enableUserFriendlyPath))
+        {
+            // dumps the "user friendly" format of the packet
+            DumpPacketUserFriendly(userFriendlyDumpFileName,
+                                   packetType,
+                                   packetOpcode,
+                                   packetSize,
+                                   buffer,
+                                   rawTime);
+        }
 
         // dumps the binary format of the packet
         DumpPacketBinary(binaryDumpFileName,
