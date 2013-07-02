@@ -38,6 +38,7 @@
 #define WOW_MOP_17056   17056
 #define WOW_MOP_17093   17093
 #define WOW_MOP_17116   17116
+#define WOW_MOP_17124   17124
 #define WOW_MOP_17128   17128
 
 // stores and manages hook entries
@@ -104,6 +105,7 @@ public:
         FillHookEntry17056();
         FillHookEntry17093();
         FillHookEntry17116();
+        FillHookEntry17124();
         FillHookEntry17128();
     }
 
@@ -230,6 +232,13 @@ private:
     {
         HookEntry hookEntry17116 = HookEntry(0x364654, 0x36276A);
         _hookEntryMap[WOW_MOP_17116] = hookEntry17116;
+    }
+
+    // address offsets for MOP, 17124
+    static void FillHookEntry17124()
+    {
+        HookEntry hookEntry17124 = HookEntry(0x3F3B0F, 0x3F1490);
+        _hookEntryMap[WOW_MOP_17124] = hookEntry17124;
     }
 
     // address offsets for MOP, 17128
