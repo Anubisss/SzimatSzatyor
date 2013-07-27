@@ -2,6 +2,7 @@ set(SZIMAT_SZATYOT_SHARED_HEADERS ${CMAKE_CURRENT_SOURCE_DIR} CACHE INTERNAL "sh
 
 add_library(shared STATIC
     HookEntryManager.cpp
+    HookEntryManager.h
 )
 
 target_link_libraries(shared

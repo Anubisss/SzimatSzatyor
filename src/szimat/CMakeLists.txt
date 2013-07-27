@@ -1,5 +1,8 @@
 add_library(szimat SHARED
     main.cpp
+    ConsoleManager.h
+    HookManager.h
+    PacketDump.h
 )
 
 target_link_libraries(szimat
