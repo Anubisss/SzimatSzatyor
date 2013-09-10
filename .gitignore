@@ -4,3 +4,4 @@ bin/*
 *.user
 *.sdf
 *.opensdf
+build/*
