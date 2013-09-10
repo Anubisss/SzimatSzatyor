@@ -27,6 +27,7 @@
 #define WOW_WLK_12340   12340
 #define WOW_CATA_13623  13623
 #define WOW_CATA_15595  15595
+#define WOW_MOP_16135   16135
 #define WOW_MOP_16357   16357
 #define WOW_MOP_16650   16650
 #define WOW_MOP_16709   16709
@@ -94,6 +95,7 @@ public:
         FillHookEntry12340();
         FillHookEntry13623();
         FillHookEntry15595();
+        FillHookEntry16135();
         FillHookEntry16357();
         FillHookEntry16650();
         FillHookEntry16709();
@@ -155,6 +157,13 @@ private:
     {
         HookEntry hookEntry16357 = HookEntry(0x89590, 0x873D0);
         _hookEntryMap[WOW_CATA_15595] = hookEntry16357;
+    }
+
+    // address offsets for MOP, 16135
+    static void FillHookEntry16135()
+    {
+        HookEntry hookEntry16135 = HookEntry(0x3F8EE0, 0x3F6B10);
+        _hookEntryMap[WOW_CATA_16135] = hookEntry16135;
     }
 
     // address offsets for MOP, 16357
