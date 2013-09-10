@@ -328,7 +328,7 @@ DWORD __fastcall RecvHook(void* thisPTR,
                           void* param3)
 {
     DWORD buffer = *(DWORD*)((DWORD)param2 + 4);
-    DWORD packetOcode = *(DWORD*)buffer;
+    DWORD packetOcode = *(short*)buffer;
     DWORD packetSize = *(DWORD*)((DWORD)param2 + 16); // totalLength, writePos
 
     // packet dump

@@ -24,6 +24,7 @@
 #include <cstring>
 #include <cstdio>
 #include <list>
+#include <algorithm>
 
 #include "HookEntryManager.h"
 
