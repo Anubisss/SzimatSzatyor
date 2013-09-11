@@ -41,7 +41,8 @@ public:
                            PacketType packetType,
                            DWORD packetOpcode,
                            DWORD packetSize,
-                           DWORD buffer)
+                           DWORD buffer,
+                           WORD initialReadOffset)
     {
         // gets the time
         time_t rawTime;
@@ -57,7 +58,8 @@ public:
                                    packetOpcode,
                                    packetSize,
                                    buffer,
-                                   rawTime);
+                                   rawTime,
+                                   initialReadOffset);
         }
 
         // dumps the binary format of the packet
@@ -66,11 +68,12 @@ public:
                          packetOpcode,
                          packetSize,
                          buffer,
-                         rawTime);
+                         rawTime,
+                         initialReadOffset);
     }
 
 private:
-    static void DumpPacketUserFriendly(const char* fileName, PacketType packetType, DWORD packetOpcode, DWORD packetSize, DWORD buffer, time_t timestamp)
+    static void DumpPacketUserFriendly(const char* fileName, PacketType packetType, DWORD packetOpcode, DWORD packetSize, DWORD buffer, time_t timestamp, WORD initialReadOffset)
     {
         // open the file in (default) text mode
         FILE* file = fopen(fileName, "a");
@@ -80,7 +83,7 @@ private:
         WriteUserFriendlyRuler(file);
 
         // really dumps the packet's data
-        WriteUserFriendlyPacketDump(file, buffer, packetSize);
+        WriteUserFriendlyPacketDump(file, packetType, buffer, packetSize, initialReadOffset);
 
         // ruler again
         WriteUserFriendlyRuler(file);
@@ -140,7 +143,7 @@ private:
     }
 
     // the real work of the "user friendly" packet
-    static void WriteUserFriendlyPacketDump(FILE* file, DWORD buffer, DWORD packetSize)
+    static void WriteUserFriendlyPacketDump(FILE* file, PacketType packetType, DWORD buffer, DWORD packetSize, WORD initialReadOffset)
     {
         // empty packet
         if (packetSize == 0)
@@ -151,8 +154,8 @@ private:
 
         // some magic to get the proper, nice format
         // should be hard to comment that... :)
-        DWORD readOffset1 = 4;
-        DWORD readOffset2 = 4;
+        DWORD readOffset1 = initialReadOffset;
+        DWORD readOffset2 = initialReadOffset;
         for (DWORD i = 0; i < packetSize; ++i)
         {
             if (i % 0x10 != 0)
@@ -196,9 +199,10 @@ private:
                                  DWORD packetOpcode,
                                  DWORD packetSize,
                                  DWORD buffer,
-                                 time_t timestamp)
+                                 time_t timestamp,
+                                 WORD initialReadOffset)
     {
-        // open the file in binary mode
+        // opens the file in binary mode
         FILE* file = fopen(fileName, "ab");
 
         fwrite(&packetOpcode,       4, 1, file); // opcode
@@ -207,10 +211,9 @@ private:
         fwrite((BYTE*)&packetType,  1, 1, file); // direction of the packet
 
         // loops over the packet and saves the data
-        DWORD readOffset = 4;
         for (DWORD i = 0; i < packetSize; ++i)
         {
-            BYTE byte = *(BYTE*)(buffer + readOffset++);
+            BYTE byte = *(BYTE*)(buffer + initialReadOffset++);
             fwrite(&byte, 1, 1, file);
         }
 

@@ -290,17 +290,21 @@ DWORD __fastcall SendHook(void* thisPTR,
                           void* param1,
                           void* param2)
 {
+    WORD packetOpcodeSize = 4; // 4 bytes for all versions
+
     DWORD buffer = *(DWORD*)((DWORD)param1 + 4);
-    DWORD packetOcode = *(DWORD*)buffer;
+    DWORD packetOcode = *(DWORD*)buffer; // packetOpcodeSize
     DWORD packetSize = *(DWORD*)((DWORD)param1 + 16); // totalLength, writePos
 
+    WORD initialReadOffset = packetOpcodeSize;
     // dumps the packet
     PacketDump::DumpPacket(logPath,
                            binPath,
                            PacketDump::PACKET_TYPE_C2S,
                            packetOcode,
-                           packetSize - 4,
-                           buffer);
+                           packetSize - packetOpcodeSize,
+                           buffer,
+                           initialReadOffset);
 
     // unhooks the send function
     HookManager::UnHook(sendAddress, defaultMachineCodeSend);
@@ -327,17 +331,23 @@ DWORD __fastcall RecvHook(void* thisPTR,
                           void* param2,
                           void* param3)
 {
+    // 2 bytes before MOP, 4 bytes after MOP
+    WORD packetOpcodeSize = buildNumber <= WOW_MOP_16135 ? 2 : 4; 
+
     DWORD buffer = *(DWORD*)((DWORD)param2 + 4);
-    DWORD packetOcode = *(short*)buffer;
+    DWORD packetOcode = packetOpcodeSize == 2 ? *(WORD*)buffer // 2 bytes
+                                              : *(DWORD*)buffer; // or 4 bytes
     DWORD packetSize = *(DWORD*)((DWORD)param2 + 16); // totalLength, writePos
 
+    WORD initialReadOffset = packetOpcodeSize;
     // packet dump
     PacketDump::DumpPacket(logPath,
                            binPath,
                            PacketDump::PACKET_TYPE_S2C,
                            packetOcode,
-                          packetSize - (buildNumber == WOW_CLASS_5875 ? 2 : 4),
-                           buffer);
+                           packetSize - packetOpcodeSize,
+                           buffer,
+                           initialReadOffset);
 
     // unhooks the recv function
     HookManager::UnHook(recvAddress, defaultMachineCodeRecv);
