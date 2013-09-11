@@ -16,6 +16,13 @@
 project(SzimatSzatyor)
 cmake_minimum_required(VERSION 2.6)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+# project must be compiled in 32-bit mode
+# because the targeted WoW process is 32-bit also
+# if you compile it with a 64-bit compiler the sniffer won't work
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    message(FATAL_ERROR "Only 32-bit compilation allowed!")
+endif()
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 add_subdirectory(src)

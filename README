@@ -3,10 +3,9 @@
 
 
 
-   SzimatSzatyor is a WoW (World of Warcraft) injector sniffer written in C++
-and developped with Visual Studio 11 (2012).
+   SzimatSzatyor is a WoW (World of Warcraft) injector sniffer written in C++.
    A sniffer can log packets which sended by the server and which sended by
-the client. The code using a lot of low-level C Windows API.
+the client also. The code using a lot of low-level C Windows API.
    Some words about the project name: szimatszatyor is a
 hungarian compound word, in English "szimat" should be "sniff" or "flair" and
 "szatyor" should be "bag". This project is a sniffer so that's why I named it
@@ -66,6 +65,18 @@ WARNING: An injector sniffer (like SzimatSzatyor) is writing into WoW's memory
          At this time never detected by Warden and no punishment rewarded.
          I think Blizzard just doesn't care about it,
          it's not really a cheat... :)
+
+
+
+COMPILATION:    If you want to compile SzimatSzatyor from the source code
+             you have to generate the project files for your compiler with CMake.
+                CMake (http://www.cmake.org/) is an extensible, open-source
+             system that manages the build process in an operating system
+             and in a compiler-independent manner. You can download a GUI
+             for your Windows OS and generate project files for example
+             your Visual Studio.
+                Note that you must compile the project with a 32-bit compiler
+             because the sniffer won't work if you compile it in 64-bit mode.
 
 
 
