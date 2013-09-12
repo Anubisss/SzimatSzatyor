@@ -164,7 +164,7 @@ private:
     // address offsets for MOP, 16135
     static void FillHookEntry16135()
     {
-        HookEntry hookEntry16135 = HookEntry(0x3F8EE0, 0x3F6B10);
+        HookEntry hookEntry16135 = HookEntry(0x3F9AE0, 0x3F7710);
         _hookEntryMap[WOW_MOP_16135] = hookEntry16135;
     }
 
