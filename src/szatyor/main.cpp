@@ -302,7 +302,10 @@ bool IsProcessAlreadyInjected(DWORD PID, const char* moduleName)
 HANDLE OpenClientProcess(DWORD processID)
 {
     // tries to open the targeted process
-    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, processID);
+    // note: don't use PROCESS_ALL_ACCESS
+    HANDLE hProcess = OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_READ |
+                                  PROCESS_VM_WRITE |PROCESS_QUERY_INFORMATION |
+                                  PROCESS_CREATE_THREAD, FALSE, processID);
     // error?
     if (!hProcess)
     {
