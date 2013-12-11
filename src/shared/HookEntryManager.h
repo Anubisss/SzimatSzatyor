@@ -281,12 +281,14 @@ private:
         _hookEntryMap[WOW_MOP_17371] = hookEntry17371;
     }
 
+    // address offsets for MOP, 17399
     static void FillHookEntry17399()
     {
         HookEntry hookEntry17399 = HookEntry(0x39199E, 0x38FA21);
         _hookEntryMap[WOW_MOP_17399] = hookEntry17399;
     }
 
+    // address offsets for MOP, 17538
     static void FillHookEntry17538()
     {
         HookEntry hookEntry17538 = HookEntry(0x38F1A9, 0x38D225);
