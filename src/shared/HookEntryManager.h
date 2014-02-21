@@ -128,7 +128,7 @@ public:
         FillHookEntry17859();
         FillHookEntry17889();
         FillHookEntry17898();
-		FillHookEntry17930();
+        FillHookEntry17930();
     }
 
     // returns true if hook entry exists for this specified build number
