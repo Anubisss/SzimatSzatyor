@@ -46,8 +46,8 @@ packets from the client.
     - Log files are created to where SzimatSzatyor is.
     - Create an empty file (name: dump_user_friendly) where the SzimatSzatyor
       is to enable the "user friendly" log format. Just delete (or rename)
-      this file if you want to disable it again. You can enable and disable
-      (even multiple times) while WoW is running.
+      this file if you want to disable it again. You can NOT enable or disable
+      while WoW is running.
 
 
 Currently supported clients:

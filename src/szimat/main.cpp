@@ -83,7 +83,6 @@ BYTE defaultMachineCodeRecv[JMP_INSTRUCTION_SIZE] = { 0 };
 
 
 
-
 // these are false if "hook functions" don't called yet
 // and they are true if already called at least once
 bool sendHookGood = false;
@@ -95,8 +94,14 @@ char logPath[MAX_PATH] = { 0 };
 char binPath[MAX_PATH] = { 0 };
 
 /* static */ char PacketDump::enableUserFriendlyPath[MAX_PATH] = { 0 };
-/* static */
-          char PacketDump::enableUserFriendlyFileName[] = "dump_user_friendly";
+/* static */ char
+             PacketDump::enableUserFriendlyFileName[] = "dump_user_friendly";
+
+/* static */ FILE* PacketDump::userFriendlyDumpFile = NULL;
+/* static */ FILE* PacketDump::binaryDumpFile = NULL;
+
+/* static */ PacketDump::UserFiendlyLogStatus
+             PacketDump::_userFiendlyLogStatus = USER_FRIENDLY_LOG_NOT_CHECKED;
 
 // basically this method controls what the sniffer should do
 // pretty much like a "main method"
@@ -125,6 +130,16 @@ BOOL APIENTRY DllMain(HINSTANCE instDLL, DWORD reason, LPVOID /* reserved */)
     // the DLL is being unloaded
     else if (reason == DLL_PROCESS_DETACH)
     {
+        if (PacketDump::userFriendlyDumpFile)
+        {
+            fflush(PacketDump::userFriendlyDumpFile);
+            fclose(PacketDump::userFriendlyDumpFile);
+        }
+        if (PacketDump::binaryDumpFile)
+        {
+            fflush(PacketDump::binaryDumpFile);
+            fclose(PacketDump::binaryDumpFile);
+        }
         // deallocates the console
         ConsoleManager::Destroy();
     }
@@ -150,7 +165,8 @@ DWORD MainThreadControl(LPVOID /* param */)
 
     printf("User friendly format dump is disabled by default.\n");
     printf("To enable just create a file which name is ");
-    printf("\"dump_user_friendly\".\nDelete if you wan't to disable it.\n\n");
+    printf("\"dump_user_friendly\".\nDelete if you wan't to disable it.\n");
+    printf("You can NOT enable/disable if you sniffer already started.\n\n");
 
     // inits the HookManager
     HookEntryManager::FillHookEntries();
@@ -240,7 +256,6 @@ DWORD MainThreadControl(LPVOID /* param */)
               PacketDump::enableUserFriendlyFileName);
 
 
-
     // get the base address of the current process
     DWORD baseAddress = (DWORD)GetModuleHandle(NULL);
 
@@ -313,6 +328,15 @@ DWORD __fastcall SendHook(void* thisPTR,
     // so it can send the packet to the server
     DWORD returnValue = SendProto(sendAddress)(thisPTR, param1, param2);
 
+    // something wrong with the file opening
+    if (!PacketDump::binaryDumpFile ||
+        (PacketDump::IsUserFriendlyLogEnabled() &&
+         !PacketDump::userFriendlyDumpFile))
+    {
+        isSigIntOccured = true;
+        return returnValue;
+    }
+
     // hooks again to catch the next outgoing packets also
     HookManager::ReHook(sendAddress, machineCodeHookSend);
 
@@ -322,7 +346,7 @@ DWORD __fastcall SendHook(void* thisPTR,
         sendHookGood = true;
     }
 
-    return 0;
+    return returnValue;
 }
 
 DWORD __fastcall RecvHook(void* thisPTR,

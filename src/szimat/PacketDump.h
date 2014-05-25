@@ -29,10 +29,29 @@ public:
         PACKET_TYPE_S2C = 1  // server to client, SMSG
     };
 
+    enum UserFiendlyLogStatus
+    {
+        USER_FRIENDLY_LOG_NOT_CHECKED,
+        USER_FRIENDLY_LOG_DISABLED,
+        USER_FRIENDLY_LOG_ENABLED
+    };
+
     // name of the file which enables the "user friendly" log format
     static char enableUserFriendlyFileName[];
     // path of the file which enables the "user friendly" log format
     static char enableUserFriendlyPath[MAX_PATH];
+
+    static FILE* userFriendlyDumpFile;
+    static FILE* binaryDumpFile;
+
+private:
+    static UserFiendlyLogStatus _userFiendlyLogStatus;
+
+public:
+    static bool IsUserFriendlyLogEnabled()
+    {
+        return _userFiendlyLogStatus == USER_FRIENDLY_LOG_ENABLED;
+    }
 
     // just this method should be used "globally"
     // basically logs the packets via other private functions
@@ -50,33 +69,62 @@ public:
 
         // only dumps "user friendly" format if
         // "dump_user_friendly" file exists
-        if (PathFileExists(enableUserFriendlyPath))
+        if (_userFiendlyLogStatus == USER_FRIENDLY_LOG_NOT_CHECKED)
         {
+            if (PathFileExists(enableUserFriendlyPath))
+                _userFiendlyLogStatus = USER_FRIENDLY_LOG_ENABLED;
+            else
+                _userFiendlyLogStatus = USER_FRIENDLY_LOG_DISABLED;
+        }
+
+        if (IsUserFriendlyLogEnabled())
+        {
+            if (!userFriendlyDumpFile)
+            {
+                userFriendlyDumpFile = fopen(userFriendlyDumpFileName, "w");
+                if (!userFriendlyDumpFile)
+                {
+                    printf("Cannot open file: %s, error code: %d - %s",
+                           userFriendlyDumpFileName, errno, strerror(errno));
+                    return;
+                }
+            }
+
             // dumps the "user friendly" format of the packet
-            DumpPacketUserFriendly(userFriendlyDumpFileName,
+            DumpPacketUserFriendly(userFriendlyDumpFile,
                                    packetType,
                                    packetOpcode,
                                    packetSize,
                                    buffer,
                                    rawTime,
                                    initialReadOffset);
+            fflush(userFriendlyDumpFile);
         }
 
+        if (!binaryDumpFile)
+        {
+            binaryDumpFile = fopen(binaryDumpFileName, "wb"); // binary mode
+            if (!binaryDumpFile)
+            {
+                printf("Cannot open file: %s, error code: %d - %s",
+                       binaryDumpFileName, errno, strerror(errno));
+                return;
+            }
+        }
         // dumps the binary format of the packet
-        DumpPacketBinary(binaryDumpFileName,
+        DumpPacketBinary(binaryDumpFile,
                          packetType,
                          packetOpcode,
                          packetSize,
                          buffer,
                          rawTime,
                          initialReadOffset);
+        fflush(binaryDumpFile);
     }
 
 private:
-    static void DumpPacketUserFriendly(const char* fileName, PacketType packetType, DWORD packetOpcode, DWORD packetSize, DWORD buffer, time_t timestamp, WORD initialReadOffset)
+    static void DumpPacketUserFriendly(FILE* file, PacketType packetType, DWORD packetOpcode, DWORD packetSize, DWORD buffer, time_t timestamp, WORD initialReadOffset)
     {
-        // open the file in (default) text mode
-        FILE* file = fopen(fileName, "a");
 
         // writes a header and a ruler
         WriteUserFriendlyHeader(file, packetType, packetOpcode, packetSize, timestamp);
@@ -88,8 +136,6 @@ private:
         // ruler again
         WriteUserFriendlyRuler(file);
         fprintf(file, "\n\n");
-
-        fclose(file);
     }
 
     // a header which contains some details about the packet
@@ -126,9 +172,6 @@ private:
                 packetSize,
                 (DWORD)timestamp,
                 dateStr);
-
-        // flushes
-        fflush(file);
     }
 
     // a "ruler" which makes easier to read the "user friendly" dump
@@ -139,7 +182,6 @@ private:
         "|        | 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F | 0 1 2 3 4 5 6 7 8 9 A B C D E F |\n"
         "|--------|-------------------------------------------------|---------------------------------|\n";
         fprintf(file, ruler);
-        fflush(file);
     }
 
     // the real work of the "user friendly" packet
@@ -187,14 +229,11 @@ private:
                     fprintf(file, "%s", "  ");
             fprintf(file, "%s\n", "|");
         }
-
-        // flushes
-        fflush(file);
     }
 
     // saves the packet in Trinity's WPP format
     // https://github.com/TrinityCore/WowPacketParser
-    static void DumpPacketBinary(const char* fileName,
+    static void DumpPacketBinary(FILE* file,
                                  PacketType packetType,
                                  DWORD packetOpcode,
                                  DWORD packetSize,
@@ -202,9 +241,6 @@ private:
                                  time_t timestamp,
                                  WORD initialReadOffset)
     {
-        // opens the file in binary mode
-        FILE* file = fopen(fileName, "ab");
-
         fwrite(&packetOpcode,       4, 1, file); // opcode
         fwrite(&packetSize,         4, 1, file); // size of the packet
         fwrite((DWORD*)&timestamp,  4, 1, file); // timestamp of the packet
@@ -216,9 +252,5 @@ private:
             BYTE byte = *(BYTE*)(buffer + initialReadOffset++);
             fwrite(&byte, 1, 1, file);
         }
-
-        // closes the file
-        // so every single packet dump should open and close the file
-        fclose(file);
     }
 };
