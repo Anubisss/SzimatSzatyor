@@ -380,7 +380,7 @@ private:
     static void FillHookEntry18379()
     {
         HookEntry hookEntry18379 = HookEntry(0x296E23, 0x2944FC);
-        _hookEntryMap[WOW_MOP_18379] = hookEntry18379;
+        _hookEntryMap[WOW_WOD_18379] = hookEntry18379;
     }
 
     // type for storing hook entries
