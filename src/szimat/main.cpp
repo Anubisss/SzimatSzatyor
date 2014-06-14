@@ -44,7 +44,7 @@ WORD buildNumber = 0;
 // fastcall convention means that the first 2 parameters is passed
 // via ECX and EDX registers so the first param will be the this pointer and
 // the second one is just a dummy (not used)
-DWORD __fastcall SendHook(void* thisPTR,
+DWORD __fastcall SendHook(void* /* thisPTR */,
                           void* /* dummy */,
                           void* /* param1 */,
                           void* /* param2 */);
@@ -62,18 +62,24 @@ BYTE defaultMachineCodeSend[JMP_INSTRUCTION_SIZE] = { 0 };
 
 
 // this function will be called when recv called in the client
-DWORD __fastcall RecvHook(void* thisPTR,
-                          void* /* dummy */,
-                          void* /* param1 */,
-                          void* /* param2 */,
-                          void* /* param3 */,
-                          void* /* param4 */);
+DWORD __fastcall RecvHook_PreWOD(void* /* thisPTR */,
+                                 void* /* dummy */, // this is for the fastcall calling convention
+                                 void* /* param1 */,
+                                 void* /* param2 */,
+                                 void* /* param3 */);
 // this recv prototype fits with the client's one
 typedef DWORD (__thiscall *RecvProto)(void*, void*, void*, void*);
-// clients which has build number 18379 >=
-typedef DWORD (__thiscall *RecvProto18379)(void*, void*, void*, void*, void*);
 // clients which has build number <= 8606 have different prototype
 typedef DWORD (__thiscall *RecvProto8606)(void*, void*, void*);
+
+DWORD __fastcall RecvHook_WOD(void* /* thisPTR */,
+                              void* /* dummy */,
+                              void* /* param1 */,
+                              void* /* param2 */,
+                              void* /* param3 */,
+                              void* /* param4 */);
+// clients which has build number 18379 >=
+typedef DWORD (__thiscall *RecvProto18379)(void*, void*, void*, void*, void*);
 
 // address of WoW's recv function
 DWORD recvAddress = 0;
@@ -280,11 +286,18 @@ DWORD MainThreadControl(LPVOID /* param */)
     HookEntryManager::GetHookEntry(buildNumber).processMessage_AddressOffset;
     // plus the base address
     recvAddress += baseAddress;
+
     // hooks client's recv function
-    HookManager::Hook(recvAddress,
-                      (DWORD)RecvHook,
-                      machineCodeHookRecv,
-                      defaultMachineCodeRecv);
+    if (buildNumber < WOW_WOD_18379)
+        HookManager::Hook(recvAddress,
+                          (DWORD)RecvHook_PreWOD,
+                          machineCodeHookRecv,
+                          defaultMachineCodeRecv);
+    else
+        HookManager::Hook(recvAddress,
+                          (DWORD)RecvHook_WOD,
+                          machineCodeHookRecv,
+                          defaultMachineCodeRecv);
 
     printf("Recv is hooked.\n");
 
@@ -352,30 +365,21 @@ DWORD __fastcall SendHook(void* thisPTR,
     return returnValue;
 }
 
-DWORD __fastcall RecvHook(void* thisPTR,
-                          void* /* dummy */,
-                          void* param1,
-                          void* param2,
-                          void* param3,
-                          void* param4)
+DWORD __fastcall RecvHook_PreWOD(void* thisPTR,
+                                 void* /* dummy */,
+                                 void* param1,
+                                 void* param2,
+                                 void* param3)
 {
     // 2 bytes before MOP, 4 bytes after MOP
     WORD packetOpcodeSize = buildNumber <= WOW_MOP_16135 ? 2 : 4; 
 
-    DWORD buffer = 0;
-    if (buildNumber < WOW_WOD_18379)
-        buffer = *(DWORD*)((DWORD)param2 + 4);
-    else
-        buffer = *(DWORD*)((DWORD)param3 + 4);
+    DWORD buffer = *(DWORD*)((DWORD)param2 + 4);
 
     DWORD packetOcode = packetOpcodeSize == 2 ? *(WORD*)buffer // 2 bytes
                                               : *(DWORD*)buffer; // or 4 bytes
 
-    DWORD packetSize = 0;
-    if (buildNumber < WOW_WOD_18379)
-        packetSize = *(DWORD*)((DWORD)param2 + 16); // totalLength, writePos
-    else
-        packetSize = *(DWORD*)((DWORD)param3 + 16);
+    DWORD packetSize = *(DWORD*)((DWORD)param2 + 16); // totalLength, writePos
 
     WORD initialReadOffset = packetOpcodeSize;
     // packet dump
@@ -394,10 +398,49 @@ DWORD __fastcall RecvHook(void* thisPTR,
     DWORD returnValue = 0;
     if (buildNumber <= WOW_TBC_8606) // different prototype
         returnValue = RecvProto8606(recvAddress)(thisPTR, param1, param2);
-    else if (buildNumber >= WOW_WOD_18379)
-        returnValue = RecvProto18379(recvAddress)(thisPTR, param1, param2, param3, param4);
     else
         returnValue = RecvProto(recvAddress)(thisPTR, param1, param2, param3);
+
+    // hooks again to catch the next incoming packets also
+    HookManager::ReHook(recvAddress, machineCodeHookRecv);
+
+    if (!recvHookGood)
+    {
+        printf("Recv hook is working.\n");
+        recvHookGood = true;
+    }
+
+    return returnValue;
+}
+
+DWORD __fastcall RecvHook_WOD(void* thisPTR,
+                                 void* /* dummy */,
+                                 void* param1,
+                                 void* param2,
+                                 void* param3,
+                                 void* param4)
+{
+    DWORD buffer = *(DWORD*)((DWORD)param3 + 4);
+
+    DWORD packetOcode = *(DWORD*)buffer; // or 4 bytes
+
+    DWORD packetSize = *(DWORD*)((DWORD)param3 + 16); // totalLength, writePos
+
+    WORD initialReadOffset = 4;
+    // packet dump
+    PacketDump::DumpPacket(logPath,
+                           binPath,
+                           PacketDump::PACKET_TYPE_S2C,
+                           packetOcode,
+                           packetSize - initialReadOffset,
+                           buffer,
+                           initialReadOffset);
+
+    // unhooks the recv function
+    HookManager::UnHook(recvAddress, defaultMachineCodeRecv);
+
+    // calls client's function so it can processes the packet
+    DWORD returnValue = RecvProto18379(recvAddress)(thisPTR, param1, param2, param3, param4);
 
     // hooks again to catch the next incoming packets also
     HookManager::ReHook(recvAddress, machineCodeHookRecv);
