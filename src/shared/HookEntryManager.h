@@ -379,7 +379,7 @@ private:
     // address offset for WOD, 18379
     static void FillHookEntry18379()
     {
-        HookEntry hookEntry18379 = HookEntry(0x296E23, 0x2944FC);
+        HookEntry hookEntry18379 = HookEntry(0x297A23, 0x2950FC);
         _hookEntryMap[WOW_WOD_18379] = hookEntry18379;
     }
 
