@@ -414,15 +414,15 @@ DWORD __fastcall RecvHook_PreWOD(void* thisPTR,
 }
 
 DWORD __fastcall RecvHook_WOD(void* thisPTR,
-                                 void* /* dummy */,
-                                 void* param1,
-                                 void* param2,
-                                 void* param3,
-                                 void* param4)
+                              void* /* dummy */,
+                              void* param1,
+                              void* param2,
+                              void* param3,
+                              void* param4)
 {
     DWORD buffer = *(DWORD*)((DWORD)param3 + 4);
 
-    DWORD packetOcode = *(DWORD*)buffer; // or 4 bytes
+    DWORD packetOcode = *(DWORD*)buffer; // 4 bytes
 
     DWORD packetSize = *(DWORD*)((DWORD)param3 + 16); // totalLength, writePos
 
