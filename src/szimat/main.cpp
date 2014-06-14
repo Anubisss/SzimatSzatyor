@@ -66,9 +66,12 @@ DWORD __fastcall RecvHook(void* thisPTR,
                           void* /* dummy */,
                           void* /* param1 */,
                           void* /* param2 */,
-                          void* /* param3 */);
+                          void* /* param3 */,
+                          void* /* param4 */);
 // this recv prototype fits with the client's one
 typedef DWORD (__thiscall *RecvProto)(void*, void*, void*, void*);
+// clients which has build number 18379 >=
+typedef DWORD (__thiscall *RecvProto18379)(void*, void*, void*, void*, void*);
 // clients which has build number <= 8606 have different prototype
 typedef DWORD (__thiscall *RecvProto8606)(void*, void*, void*);
 
@@ -353,7 +356,8 @@ DWORD __fastcall RecvHook(void* thisPTR,
                           void* /* dummy */,
                           void* param1,
                           void* param2,
-                          void* param3)
+                          void* param3,
+                          void* param4)
 {
     // 2 bytes before MOP, 4 bytes after MOP
     WORD packetOpcodeSize = buildNumber <= WOW_MOP_16135 ? 2 : 4; 
@@ -380,6 +384,8 @@ DWORD __fastcall RecvHook(void* thisPTR,
     DWORD returnValue = 0;
     if (buildNumber <= WOW_TBC_8606) // different prototype
         returnValue = RecvProto8606(recvAddress)(thisPTR, param1, param2);
+    else if (buildNumber >= WOW_WOD_18379)
+        returnValue = RecvProto18379(recvAddress)(thisPTR, param1, param2, param3, param4);
     else
         returnValue = RecvProto(recvAddress)(thisPTR, param1, param2, param3);
 
