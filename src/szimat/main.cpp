@@ -362,10 +362,20 @@ DWORD __fastcall RecvHook(void* thisPTR,
     // 2 bytes before MOP, 4 bytes after MOP
     WORD packetOpcodeSize = buildNumber <= WOW_MOP_16135 ? 2 : 4; 
 
-    DWORD buffer = *(DWORD*)((DWORD)param2 + 4);
+    DWORD buffer = 0;
+    if (buildNumber < WOW_WOD_18379)
+        buffer = *(DWORD*)((DWORD)param2 + 4);
+    else
+        buffer = *(DWORD*)((DWORD)param3 + 4);
+
     DWORD packetOcode = packetOpcodeSize == 2 ? *(WORD*)buffer // 2 bytes
                                               : *(DWORD*)buffer; // or 4 bytes
-    DWORD packetSize = *(DWORD*)((DWORD)param2 + 16); // totalLength, writePos
+
+    DWORD packetSize = 0;
+    if (buildNumber < WOW_WOD_18379)
+        packetSize = *(DWORD*)((DWORD)param2 + 16); // totalLength, writePos
+    else
+        packetSize = *(DWORD*)((DWORD)param3 + 16);
 
     WORD initialReadOffset = packetOpcodeSize;
     // packet dump
