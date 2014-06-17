@@ -55,6 +55,7 @@
 #define WOW_MOP_18019   18019
 #define WOW_MOP_18291   18291
 #define WOW_WOD_18379   18379
+#define WOW_MOP_18414   18414
 
 // stores and manages hook entries
 // this will be compiled into a static lib
@@ -72,18 +73,22 @@ public:
         {
             send2_AddressOffset = 0;
             processMessage_AddressOffset = 0;
+            usePreWodRecvHook = true;
         }
         // constructor
-        HookEntry(DWORD send2, DWORD processMessage)
+        HookEntry(DWORD send2, DWORD processMessage, bool preWod = true)
         {
             send2_AddressOffset = send2;
             processMessage_AddressOffset = processMessage;
+            usePreWodRecvHook = preWod;
         }
 
         // offset of NetClient::Send2 to sniff client packets
         DWORD send2_AddressOffset;
         // offset of NetClient::ProcessMessage to sniff server packets
         DWORD processMessage_AddressOffset;
+
+        bool usePreWodRecvHook;
     };
 
     // returns the build number of the client
@@ -137,6 +142,7 @@ public:
         FillHookEntry18019();
         FillHookEntry18291();
         FillHookEntry18379();
+        FillHookEntry18414();
     }
 
     // returns true if hook entry exists for this specified build number
@@ -379,8 +385,15 @@ private:
     // address offset for WOD, 18379
     static void FillHookEntry18379()
     {
-        HookEntry hookEntry18379 = HookEntry(0x297A23, 0x2950FC);
+        HookEntry hookEntry18379 = HookEntry(0x297A23, 0x2950FC, false);
         _hookEntryMap[WOW_WOD_18379] = hookEntry18379;
+    }
+
+    // address offset for MOP, 18414
+    static void FillHookEntry18414()
+    {
+        HookEntry hookEntry18414 = HookEntry(0x399DF8, 0x397CEE);
+        _hookEntryMap[WOW_MOP_18414] = hookEntry18414;
     }
 
     // type for storing hook entries

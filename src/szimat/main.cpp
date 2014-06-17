@@ -288,7 +288,7 @@ DWORD MainThreadControl(LPVOID /* param */)
     recvAddress += baseAddress;
 
     // hooks client's recv function
-    if (buildNumber < WOW_WOD_18379)
+    if (HookEntryManager::GetHookEntry(buildNumber).usePreWodRecvHook)
         HookManager::Hook(recvAddress,
                           (DWORD)RecvHook_PreWOD,
                           machineCodeHookRecv,
