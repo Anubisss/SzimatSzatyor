@@ -310,7 +310,8 @@ DWORD MainThreadControl(LPVOID /* param */)
     DWORD hookFunctionAddress = 0;
     // gets the expansion of the build number (hook)
     HookEntryManager::HOOK_WOW_EXP hookVersion = hookEntry.expansion;
-    // selects the proper hook function's address
+    // selects the proper hook function
+    // the selection is based on the expansion of the build
     switch (hookVersion)
     {
         case HookEntryManager::HOOK_WOW_EXP::EXP_CLASSIC:
