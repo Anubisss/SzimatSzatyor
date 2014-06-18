@@ -160,7 +160,7 @@ public:
     // checks all the hook entries
     // if there is an invalid exp (EXP_UNK) returns the hook's build number
     // otherwise 0
-    static WORD IsHooksExpansionValid()
+    static WORD GetFirstInvalidHookExp()
     {
         for (HookEntryMap::const_iterator itr = _hookEntryMap.begin();
              itr != _hookEntryMap.end();

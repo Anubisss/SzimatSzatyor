@@ -190,7 +190,7 @@ DWORD MainThreadControl(LPVOID /* param */)
     }
 
     // is there any invalid hooks?
-    WORD invalidHookBuildNumber = HookEntryManager::IsHooksExpansionValid();
+    WORD invalidHookBuildNumber = HookEntryManager::GetFirstInvalidHookExp();
     if (invalidHookBuildNumber)
     {
         printf("The hook with the following build number is invalid: %hu\n\n",
