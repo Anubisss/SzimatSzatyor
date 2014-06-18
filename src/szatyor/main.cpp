@@ -68,12 +68,35 @@ int main(int argc, char* argv[])
         printf("ERROR: Invalid parameters. ");
         printf("\"szatyor.exe [wow_exe_name]\" should be used.\n\n");
         system("pause");
-        return 0;
+        return 1;
     }
     // custom process' name
     else if (argc == 2)
         lookingProcessName = argv[1];
 
+    // inits the HookManager
+    HookEntryManager::FillHookEntries();
+
+    // is there any hooks?
+    if (HookEntryManager::IsEmpty())
+    {
+        printf("There are no hooks.\n");
+        printf("So the injector (also the sniffer) can't do anything useful.");
+        printf("\n\n");
+        system("pause");
+        return 1;
+    }
+
+    // is there any invalid hooks?
+    WORD invalidHookBuildNumber = HookEntryManager::IsHooksExpansionValid();
+    if (invalidHookBuildNumber)
+    {
+        printf("The hook with the following build number is invalid: %hu\n\n",
+               invalidHookBuildNumber);
+        system("pause");
+        return 1;
+    }
+    
     // this process will be injected
     DWORD processID = 0;
 
@@ -85,7 +108,7 @@ int main(int argc, char* argv[])
         printf("Note: be sure the process which you looking for ");
         printf("is must be a 32 bit process.\n\n");
         system("pause");
-        return 0;
+        return 1;
     }
     // just one PID found
     else if (pids.size() == 1)
@@ -97,7 +120,7 @@ int main(int argc, char* argv[])
         {
             printf("Process is already injected.\n\n");
             system("pause");
-            return 0;
+            return 1;
         }
     }
     // size > 1, multiple possible processes
@@ -127,7 +150,7 @@ int main(int argc, char* argv[])
         {
             printf("All the processes are already injected.\n\n");
             system("pause");
-            return 0;
+            return 1;
         }
 
         unsigned int selectedIndex = 0;
@@ -184,7 +207,7 @@ int main(int argc, char* argv[])
         printf("ERROR: Can't get the injector's path, ");
         printf("ErrorCode: %u\n\n",  GetLastError());
         system("pause");
-        return 0;
+        return 1;
     }
 
     // full path of the DLL
@@ -427,9 +450,6 @@ bool InjectDLL(DWORD processID, const char* dllLocation)
         return false;
     }
     printf("\nProcess [%u] '%s' is opened.\n", processID, lookingProcessName);
-
-    // inits the HookManager
-    HookEntryManager::FillHookEntries();
 
     // gets the build number
     WORD buildNumber = HookEntryManager::GetBuildNumberFromProcess(hProcess);

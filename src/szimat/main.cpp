@@ -180,6 +180,25 @@ DWORD MainThreadControl(LPVOID /* param */)
     // inits the HookManager
     HookEntryManager::FillHookEntries();
 
+    // is there any hooks?
+    if (HookEntryManager::IsEmpty())
+    {
+        printf("There are no hooks.\n");
+        printf("So the sniffer can't do anything useful.\n\n");
+        system("pause");
+        FreeLibraryAndExitThread((HMODULE)instanceDLL, 0);
+    }
+
+    // is there any invalid hooks?
+    WORD invalidHookBuildNumber = HookEntryManager::IsHooksExpansionValid();
+    if (invalidHookBuildNumber)
+    {
+        printf("The hook with the following build number is invalid: %hu\n\n",
+               invalidHookBuildNumber);
+        system("pause");
+        FreeLibraryAndExitThread((HMODULE)instanceDLL, 0);
+    }
+
     // gets the build number
     buildNumber = HookEntryManager::GetBuildNumberFromProcess();
     // error occured
@@ -268,9 +287,11 @@ DWORD MainThreadControl(LPVOID /* param */)
     // get the base address of the current process
     DWORD baseAddress = (DWORD)GetModuleHandle(NULL);
 
+    HookEntryManager::HookEntry const&
+        hookEntry = HookEntryManager::GetHookEntry(buildNumber);
+
     // gets address of NetClient::Send2
-    sendAddress =
-    HookEntryManager::GetHookEntry(buildNumber).send2_AddressOffset;
+    sendAddress = hookEntry.send2_AddressOffset;
     // plus the base address
     sendAddress += baseAddress;
     // hooks client's send function
@@ -282,22 +303,38 @@ DWORD MainThreadControl(LPVOID /* param */)
     printf("Send is hooked.\n");
 
     // gets address of NetClient::ProcessMessage
-    recvAddress =
-    HookEntryManager::GetHookEntry(buildNumber).processMessage_AddressOffset;
+    recvAddress = hookEntry.processMessage_AddressOffset;
     // plus the base address
     recvAddress += baseAddress;
 
+    DWORD hookFunctionAddress = 0;
+    // gets the expansion of the build number (hook)
+    HookEntryManager::HOOK_WOW_EXP hookVersion = hookEntry.expansion;
+    // selects the proper hook function's address
+    switch (hookVersion)
+    {
+        case HookEntryManager::HOOK_WOW_EXP::EXP_CLASSIC:
+        case HookEntryManager::HOOK_WOW_EXP::EXP_TBC:
+        case HookEntryManager::HOOK_WOW_EXP::EXP_WLK:
+        case HookEntryManager::HOOK_WOW_EXP::EXP_CATA:
+        case HookEntryManager::HOOK_WOW_EXP::EXP_MOP:
+            hookFunctionAddress = (DWORD)RecvHook_PreWOD;
+            break;
+        case HookEntryManager::HOOK_WOW_EXP::EXP_WOD:
+            hookFunctionAddress = (DWORD)RecvHook_WOD;
+            break;
+        default:
+            printf("Invalid hook expansion: %d\n\n", (int)hookVersion);
+            system("pause");
+            FreeLibraryAndExitThread((HMODULE)instanceDLL, 0);
+            break;
+    }
+
     // hooks client's recv function
-    if (HookEntryManager::GetHookEntry(buildNumber).usePreWodRecvHook)
-        HookManager::Hook(recvAddress,
-                          (DWORD)RecvHook_PreWOD,
-                          machineCodeHookRecv,
-                          defaultMachineCodeRecv);
-    else
-        HookManager::Hook(recvAddress,
-                          (DWORD)RecvHook_WOD,
-                          machineCodeHookRecv,
-                          defaultMachineCodeRecv);
+    HookManager::Hook(recvAddress,
+                      hookFunctionAddress,
+                      machineCodeHookRecv,
+                      defaultMachineCodeRecv);
 
     printf("Recv is hooked.\n");
 
