@@ -58,6 +58,7 @@
 #define WOW_MOP_18414   18414
 #define WOW_WOD_18443   18443
 #define WOW_WOD_18471   18471
+#define WOW_WOD_18482   18482
 
 // stores and manages hook entries
 // this will be compiled into a static lib
@@ -159,6 +160,7 @@ public:
         FillHookEntry18414();
         FillHookEntry18443();
         FillHookEntry18471();
+        FillHookEntry18482();
     }
 
     // checks all the hook entries
@@ -449,6 +451,13 @@ private:
     {
         HookEntry hookEntry18471 = HookEntry(0x2992D8, 0x296939, EXP_WOD);
         _hookEntryMap[WOW_WOD_18471] = hookEntry18471;
+    }
+
+    // address offset for WOD, 18482
+    static void FillHookEntry18482()
+    {
+        HookEntry hookEntry18482 = HookEntry(0x298F22, 0x296583, EXP_WOD);
+        _hookEntryMap[WOW_WOD_18482] = hookEntry18482;
     }
 
     // type for storing hook entries
