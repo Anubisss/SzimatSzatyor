@@ -18,8 +18,8 @@ into the client process and szatyor.dll is the sniffer which sniffs the
 packets from the client.
 
 *FEATURES:
-    - Can target specific WoW clients by name (default is WoW.exe) via pass
-      an argument to the injector, usage: szatyor.exe [wow_exe_name]
+    - Can target specific WoW clients by name (default is Wow.exe andWowB.exe)
+      via pass an argument to the injector, usage: szatyor.exe [wow_exe_name]
     - Can detect the targeted WoW process build number so supports
       multiple builds.
     - Can detect if multiple processes have the same

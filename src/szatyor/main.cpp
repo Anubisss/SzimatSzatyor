@@ -96,12 +96,22 @@ int main(int argc, char* argv[])
         system("pause");
         return 1;
     }
-    
+
     // this process will be injected
     DWORD processID = 0;
 
     // tries to get the PIDs
     PIDList& pids = GetProcessIDsByName(lookingProcessName);
+
+    // default process (Wow.exe) doesn't exist
+    // there is no custom process name given
+    if (pids.empty() && argc != 2)
+    {
+        // lets check is there a beta/alpha process
+        lookingProcessName = "WowB.exe";
+        pids = GetProcessIDsByName(lookingProcessName);
+    }
+
     if (pids.empty())
     {
         printf("'%s' process NOT found.\n", lookingProcessName);
@@ -260,7 +270,7 @@ PIDList GetProcessIDsByName(const char* processName)
         do
         {
             // process found
-            if (!strcmp(processEntry.szExeFile, lookingProcessName))
+            if (!strcmp(processEntry.szExeFile, processName))
                 pids.push_back(processEntry.th32ProcessID);
         }
         // loops over the snapshot
