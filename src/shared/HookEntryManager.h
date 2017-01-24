@@ -60,6 +60,7 @@
 #define WOW_WOD_18471   18471
 #define WOW_WOD_18482   18482
 #define WOW_WOD_18505   18505
+#define WOW_WOD_19116   19116 
 
 // stores and manages hook entries
 // this will be compiled into a static lib
