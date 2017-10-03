@@ -1,8 +1,6 @@
 # SzimatSzatyor
 SzimatSzatyor is a WoW (World of Warcraft) injector sniffer written in C++.
 
-[![Poll: Do you like to sniff WoW with SzimatSzatyor?](http://i.imgur.com/z4bqVFXl.png)](http://pollabout.com/#/polls/c00408)
-
 A sniffer can log packets which sended by the server and which sended by
 the client also. The code using a lot of low-level C Windows API.
 
