@@ -60,6 +60,7 @@
 #define WOW_WOD_18471   18471
 #define WOW_WOD_18482   18482
 #define WOW_WOD_18505   18505
+#define WOW_WOD_20338   20338
 
 // stores and manages hook entries
 // this will be compiled into a static lib
@@ -163,6 +164,7 @@ public:
         FillHookEntry18471();
         FillHookEntry18482();
         FillHookEntry18505();
+        FillHookEntry20338();
     }
 
     // checks all the hook entries
@@ -467,6 +469,12 @@ private:
     {
         HookEntry hookEntry18505 = HookEntry(0x29ADB7, 0x298418, EXP_WOD);
         _hookEntryMap[WOW_WOD_18505] = hookEntry18505;
+    }
+    
+    static void FillHookEntry20338()
+    {
+        HookEntry hookEntry20338 = HookEntry(0x13ACAB, 0x000000, EXP_WOD);
+        _hookEntryMap[WOW_WOD_20338] = hookEntry20338;
     }
 
     // type for storing hook entries
