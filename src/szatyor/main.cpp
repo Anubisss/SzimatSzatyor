@@ -436,8 +436,8 @@ bool InjectDLL(DWORD processID, const char* dllLocation)
     HMODULE hModule = GetModuleHandle(loadedModuleName);
     if (!hModule)
     {
-        printf("ERROR: Can't get %s's handle, ");
-        printf("ErrorCode: %u\n", loadedModuleName, GetLastError());
+        printf("ERROR: Can't get %s's handle, ",loadedModuleName);
+        printf("ErrorCode: %u\n", GetLastError());
         return false;
     }
 
@@ -445,8 +445,8 @@ bool InjectDLL(DWORD processID, const char* dllLocation)
     FARPROC loadLibraryAddress = GetProcAddress(hModule, loadDLLFunctionName);
     if (!loadLibraryAddress)
     {
-        printf("ERROR: Can't get function %s's address, ");
-        printf("ErrorCode: %u\n", loadDLLFunctionName, GetLastError());
+        printf("ERROR: Can't get function %s's address, ", loadDLLFunctionName);
+        printf("ErrorCode: %u\n",GetLastError());
         return false;
     }
 

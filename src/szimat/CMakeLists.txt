@@ -36,7 +36,7 @@ if(WIN32)
     # copies the README and COPYING files to the output directory (build/bin)
     add_custom_command(TARGET szimat POST_BUILD COMMAND
                        ${CMAKE_COMMAND} -E copy
-                       ${PROJECT_SOURCE_DIR}/README
+                       ${PROJECT_SOURCE_DIR}/README.md
                        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(ConfigurationName)/)
     add_custom_command(TARGET szimat POST_BUILD COMMAND
                        ${CMAKE_COMMAND} -E copy
