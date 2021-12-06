@@ -249,7 +249,7 @@ private:
         // loops over the packet and saves the data
         for (DWORD i = 0; i < packetSize; ++i)
         {
-            BYTE byte = *(BYTE*)(buffer + initialReadOffset++);
+            BYTE byte = *(BYTE*)(buffer + initialReadOffset + i);
             fwrite(&byte, 1, 1, file);
         }
     }
